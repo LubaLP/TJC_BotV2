@@ -62,8 +62,8 @@ EXECUTER_COMMAND_MUTE.command = async function(global, client, SQL, interaction)
 }
 
 function mute(client, global, bereich, location, zeit, grund, interaction, SQL) {
-    // Servermute rollen vergabe
-    // On Only Server
+    // Servermute Rollenvergabe | Give user Servermute Role
+    // On Only Server | Nur auf Server
     if (bereich === "Server") {
         let role = client.guilds.cache.get(interaction.guild_id).roles.cache.find(role => role.name.toString().toLowerCase() === "muted")
         location = client.guilds.cache.get(interaction.guild_id)
@@ -71,7 +71,7 @@ function mute(client, global, bereich, location, zeit, grund, interaction, SQL) 
             member.roles.add(role)
         })
     }
-    // For Projekte - Rollen Entzug
+    // For Projekte - Rollen Entzug | Remove User Role
     else if (bereich === "Projekte") {
         location = "projekte"
         let role = client.guilds.cache.get(interaction.guild_id).roles.cache.get(global.config.serverdata.projekterole);
@@ -81,10 +81,10 @@ function mute(client, global, bereich, location, zeit, grund, interaction, SQL) 
             }
         })
     }
-    //Globaler Mute
+    //Globaler Mute | Global Mute
     else if (bereich === "Global") {
         location = "global"
-        //Rollen vergabe auf den Servern
+        //Rollen vergabe auf den Servern | Give User Role on Servers
         client.guilds.cache.forEach(guild => {
             let role = guild.roles.cache.find(role => role.name.toLowerCase() === "muted")
             guild.members.fetch(interaction.data.options[0].value).then(member => {
@@ -94,7 +94,7 @@ function mute(client, global, bereich, location, zeit, grund, interaction, SQL) 
 
     }
 
-    // Mute Zeit umrechnung in Sekunden
+    // Mute Zeit umrechnung in Sekunden | Convert Mute Time to Seconds
     let end = zeit.toString();
 
     if (end.toString().endsWith("m")) end = parseInt(end.toString().replace("m", "") * 60);
@@ -106,12 +106,12 @@ function mute(client, global, bereich, location, zeit, grund, interaction, SQL) 
     var seq = GLOBAL_CASEID.generate(global)
     var endTimestamp = (Date.now() + 1000 * end)
 
-    // Einträge in die benötigten Datenbank Tabellen
+    // Einträge in die benötigten Datenbank Tabellen eintragen | Insert Entries into Database Tables
     GLOBAL_SQL.execute(SQL, "MUTECOMMAND_INSERT", "INSERT INTO mutes (intern, id, serverid, bereich, duration, timestamp) VALUES (?, ?, ?, ?, ?, ?)", [seq, interaction.data.options[0].value, interaction.guild_id, bereich, end, Date.now()])
     GLOBAL_SQL.execute(SQL, "MUTECOMMAND_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags,  reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [seq, interaction.data.options[0].value, interaction.guild_id, 'mute', bereich, grund, interaction.member.user.id, interaction.channel_id, Date.now(), endTimestamp])
 
-    //Chache den Mute
+    //Chache den Mute in den globalen Mutes Array | Cache Mute in Global Mutes Array
     let region = interaction.guild_id
     if (bereich.toLowerCase() == "global") region = "global"
     if (global.mutes[interaction.data.options[0].value] != undefined) {
@@ -120,7 +120,7 @@ function mute(client, global, bereich, location, zeit, grund, interaction, SQL) 
         global.mutes[interaction.data.options[0].value] = JSON.parse("{\"servers\": [\"" + region.toString() + "\"]}")
     }
 
-    //Sende dem User infos per DM
+    //Sende dem User infos per DM | Send User Info per DM
     client.guilds.cache.get(interaction.guild_id).members.fetch(interaction.data.options[0].value).then(user => {
         EXECUTER_REPLY.user(client, user, interaction.member.user, seq, "mute", grund, location, endTimestamp)
     })
@@ -130,7 +130,7 @@ function mute(client, global, bereich, location, zeit, grund, interaction, SQL) 
     let diffDays = Math.floor(end / (60 * 60 * 24));
     dauerInt = diffDays + " Tag(e) " + dauerInt
 
-    // Antwort an den Moderator
+    // Antwort an den Moderator | Reply to Moderator
     EXECUTER_REPLY.go(
         client,
         interaction,

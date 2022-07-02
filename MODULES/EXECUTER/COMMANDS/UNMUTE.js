@@ -8,29 +8,29 @@ const GLOBAL_WEBHOOK = require("../../GLOBAL/WEBHOOKS.js")
 
 UNMUTE.command = async function(global, client, SQL, interaction) {
     if (global.mutes[interaction.data.options[0].value] != null) {
-        //Get Data from DB
+        //Get Data from DB |Hole Daten aus der Datenbank
         SQL.execute("SELECT * FROM mutes WHERE id = ? AND serverid = ?", [interaction.data.options[0].value, interaction.guild_id],
             function (err, results, fields) {
             if (!err) {
                 if (results.length > 0) {
                     result = results[0]
-                    //Regin Bestimmung
+                    //Regin Bestimmung | Region Bestimmung
                     let location = ""
                     let region = result['serverid']
                     if (result['bereich'] == "global") region = "global"
 
-                    //Rollen verwaltung
-                    if (result['bereich'] === "Server") { // Mutes die nur auf dem Hauptserver sind
+                    //Rollen verwaltung | Rollenverwaltung
+                    if (result['bereich'] === "Server") { // Mutes die nur auf dem Hauptserver sind | Mutes that are only on the main server
                         client.guilds.cache.get(result['serverid']).members.fetch(result['id']).then(member => {
                             member.roles.remove(member.guild.roles.cache.find(role => role.name.toString().toLowerCase() === "muted"))
                             location = member.guild
                         })
-                    } else if (result['bereich'] === "Projekte") { // Mutes die nur den Projektechannel betreffen
+                    } else if (result['bereich'] === "Projekte") { // Mutes die nur den Projektechannel betreffen | Mutes that are only on the project channel
                         client.guilds.cache.get(global.config.botconfig.mainserver).members.fetch(result['id']).then(member => {
                             member.roles.add(global.config.serverdata.projekterole)
                             location = "projekte"
                         })
-                    } else if (result['bereich'] === "Global") { // Mutes die auf allen TJC-Servern sind
+                    } else if (result['bereich'] === "Global") { // Mutes die auf allen TJC-Servern sind | Mutes that are on all TJC-Servers
                         client.guilds.cache.forEach(guild => {
                             let role = guild.roles.cache.find(role => role.name === "muted")
                             guild.members.fetch(result['id']).then(member => {
@@ -42,18 +42,18 @@ UNMUTE.command = async function(global, client, SQL, interaction) {
                     let reason = (interaction.data.options[1] == null) ? "Kein Grund angegeben" : interaction.data.options[1].value;
 
                     let seq = GLOBAL_CASEID.generate(global)
-                    //Remove from DB
+                    //Remove from DB | Aus Datenbank entfernen
                     GLOBAL_SQL.execute(SQL, "UNMUTECOMMAND_MUTES_REMOVE", "DELETE FROM mutes WHERE id = ? AND serverid = ?", [interaction.data.options[0].value, interaction.guild_id])
                     GLOBAL_SQL.execute(SQL, "UNMUTECOMMAND_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags, reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         [seq, interaction.data.options[0].value, interaction.guild_id, 'unmute', reason, "-", interaction.member.user.id, interaction.channel_id, Date.now(), 0])
 
 
-                    //Sende dem User infos per DM
+                    //Sende dem User infos per DM | Send info to the user via DM
                     client.guilds.cache.get(interaction.guild_id).members.fetch(interaction.data.options[0].value).then(user => {
                         EXECUTER_REPLY.user(client, user, interaction.member.user, seq, "unmute", reason, location, Date.now())
                     })
 
-                    // Antwort an den Moderator
+                    // Antwort an den Moderator | Reply to the Moderator
                     EXECUTER_REPLY.go(
                         client,
                         interaction,
@@ -67,7 +67,7 @@ UNMUTE.command = async function(global, client, SQL, interaction) {
                         true
                     )
 
-                    //Remove from Cache
+                    //Remove from Cache | Aus Cache entfernen
                     if (global.mutes[interaction.data.options[0].value].servers.includes(result['serverid']) || global.mutes[interaction.data.options[0].value].servers.includes("global")) {
                         let newjson = JSON.parse("[]")
                         global.mutes[interaction.data.options[0].value]["servers"].forEach(entry => {
@@ -102,7 +102,7 @@ UNMUTE.command = async function(global, client, SQL, interaction) {
                     )
                 }
             } else {
-                    // Antwort an den Moderator
+                    // Antwort an den Moderator | Reply to the Moderator
                     EXECUTER_REPLY.go(
                         client,
                         interaction,

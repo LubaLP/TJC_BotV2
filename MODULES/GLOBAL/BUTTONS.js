@@ -1,17 +1,17 @@
 var GLOBAL_BUTTONS = {};
 
-const GLOBAL_THROW = require("./THROW.js") // Rufe die THOW-Function auf
-const GLOBAL_DEBUG = require("./DEBUG.js") // Rufe die DEBUG-Function auf
+const GLOBAL_THROW = require("./THROW.js") // Rufe die THOW-Function auf | Call the THROW-Function
+const GLOBAL_DEBUG = require("./DEBUG.js") // Rufe die DEBUG-Function auf | Call the DEBUG-Function
 
 GLOBAL_BUTTONS.generate = function(global, interaction, name, buttons, data) {
 
-    // set var for components
+    // set var for components | set var for components
     var components = []
 
-    // Generate ID
+    // Generate ID | Generate ID
     var id = "#" + makeid(3) + Date.now() + makeid(3)
 
-    // Generate Code for return
+    // Generate Code for return | Generate Code for return
     for(i = 0; i < buttons.length; i++){
         components.push({
             "type": 2,
@@ -24,7 +24,7 @@ GLOBAL_BUTTONS.generate = function(global, interaction, name, buttons, data) {
         })
     }
 
-    // Cache Data
+    // Cache Data 
     var cache = {}
     cache.info = {}
     cache.info.name = name;
@@ -32,7 +32,7 @@ GLOBAL_BUTTONS.generate = function(global, interaction, name, buttons, data) {
     cache.data = data;
     global.cache.buttons[id] = cache
 
-    // Return Code Component
+    // Return Code Component | Return Code Component
     return [
         {
             "type": 1,
@@ -41,7 +41,7 @@ GLOBAL_BUTTONS.generate = function(global, interaction, name, buttons, data) {
     ]
 }
 
-// Return cached Code
+// Return cached Code | Return cached Code
 GLOBAL_BUTTONS.getcache = function(global, data) {
     return global.cache.buttons[data]
 }

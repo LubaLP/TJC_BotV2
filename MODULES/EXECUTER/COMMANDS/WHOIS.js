@@ -4,12 +4,12 @@ const EXECUTER_REPLY = require("../REPLY.js") // Reply System (command)
 const moment = require('moment')
 
 EXECUTER_COMMANDS_WHOIS.command = async function(global, client, SQL, interaction) {
-    // Fetch Member
+    // Fetch Member | Fetch Member
     client.guilds.cache.get(interaction.guild_id).members.fetch(interaction.data.options[0].value).then(member => {
         let createdDate = new Date(parseInt(member.user.createdAt.getTime()))
         let joinDate = new Date(parseInt(member.joinedTimestamp))
         let roles = "";
-        // Rollen auflistung
+        // Rollen auflistung | Role list
         member.roles.cache.forEach(role => {
             if (role.name !== "@everyone") {
                 roles += "<@&" + role.id + "> "
@@ -43,9 +43,9 @@ EXECUTER_COMMANDS_WHOIS.command = async function(global, client, SQL, interactio
                 }
             })
 
-            //Spotify image aus assets -> https://i.scdn.co/image/{id aus largeimage}
+            //Spotify image aus assets -> https://i.scdn.co/image/{id aus largeimage} 
             if (member.presence.activities[0] != null) details = "(" + member.presence.activities[0].details + " - " + member.presence.activities[0].state + ")"
-            // Antwort an den Moderator
+            // Antwort an den Moderator | Reply to the Moderator
             EXECUTER_REPLY.go(
                 client,
                 interaction,

@@ -1,7 +1,7 @@
 var AUTOMOD_LINKS = {};
 const GLOBAL_WEBHOOKS = require("../GLOBAL/WEBHOOKS.js") // Webhooks Manager
 
-const anchorme = require("anchorme").default // NPM Um Texte von Links zu unterscheiden
+const anchorme = require("anchorme").default // NPM Um Texte von Links zu unterscheiden | NPM to differentiate text from links
 const dns2 = require("dns2")
 
 const options = {
@@ -48,10 +48,10 @@ function removeFormat(input) {
 
 AUTOMOD_LINKS.go = async function(global, client, message, SQL) {
     let messageDeleted = false
-    if(message.member == null) return // Return, if no Member found (Webhook)
-    let tmp = false; // Set Roles-Check to false
-    if(message.member.permissions.has("ADMINISTRATOR")) {tmp = true} // Set Check to true if Administrator
-    // Check, if Member has Link Proved Role
+    if(message.member == null) return // Return, wenn kein Member gefunden (Webhook) | Return if no member found (Webhook)
+    let tmp = false; // Set Roles-Check to false 
+    if(message.member.permissions.has("ADMINISTRATOR")) {tmp = true} // Wenn Admin, dann Roles-Check auf true setzen | If admin, set Roles-Check to true
+    // Gucken, ob der User die Link-Prooved Rolle hat | Look if user has Link-Prooved role
     message.member.roles.cache.forEach((role) => {
         if(global.cache.roles.linkproved.includes(role.id)){
             tmp = true;

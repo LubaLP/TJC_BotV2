@@ -14,7 +14,7 @@ SETTINGS.command = async function(global, client, SQL, interaction) {
                                 if (result[i]['link'] == undefined) return;
                                 links += result[i]['link'] + "\n"
                             }
-                            // Antwort an den Moderator
+                            // Antwort an den Moderator | Reply to the Moderator
                             EXECUTER_REPLY.go(
                                 client,
                                 interaction,
@@ -111,7 +111,7 @@ SETTINGS.command = async function(global, client, SQL, interaction) {
                                 if (result[i]['word'] == undefined) return;
                                 words += result[i]['word'] + "\n"
                             }
-                            // Antwort an den Moderator
+                            // Antwort an den Moderator | Reply to the Moderator
                             EXECUTER_REPLY.go(
                                 client,
                                 interaction,
