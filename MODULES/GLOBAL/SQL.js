@@ -18,21 +18,21 @@ GLOBAL_SQL.execute = function (SQL, caller, SQLCommand, Arguments) {
 GLOBAL_SQL.getwhitelist = function (global, SQL) {
     try {
 
-        // Fetch all cases from database
+        // Fetch all cases from database | Alle Fälle aus der Datenbank holen
         SQL.execute("SELECT * FROM `whitelist`", [], function (err, result, fields) {
             if (err) {
                 GLOBAL_DEBUG.console("error", "GLOBAL_SQL.getwhitelistlist", "ERRORCODE: " + err)
             }
 
-            // reset array
+            // reset array | Array zurücksetzen
             global.cache.whitelist = []
 
-            // push all caseid's in array
+            // push all caseid's in array | Alle CaseID's in Array pushen
             for(i = 0; i < result.length; i++){
                 global.cache.whitelist.push(result[i].link)
             }
 
-            // output ready
+            // output ready | Ausgabe bereit
             GLOBAL_DEBUG.console("log", "GLOBAL_SQL.getwhitelist", "fetched whitelist")
         })
     } catch (e) {

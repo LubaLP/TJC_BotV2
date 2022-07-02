@@ -33,7 +33,7 @@ const {
 console.log('System startet!')
 
 
-// Globale Variabel, auf die von überall zugegriffen werden kann
+// Globale Variabel, auf die von überall zugegriffen werden kann | Glabal var to access from everywhere
 let global = {}
 global.config = { botconfig, globalserver, serverdata, mysqldata, webhook, botspamsystem, automod }
 global.cache = {}
@@ -57,38 +57,38 @@ global.automod.projekte.messages = []
 const Intents = Discord.Intents
 let DiscordBotIntents = [Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.DIRECT_MESSAGES]
 
-// Erstelle Connections
+// Erstelle Connections | Create Connections
 const SQL = mysql.createPool(mysqldata)
 const client = new Discord.Client({intents: DiscordBotIntents});
 
-// Discord Events
+// Discord Events | Discord Events
 
 let lastJoins = JSON.parse("{\"joins\": []}");
 let botwelle = false;
 let messageLogs = {}
 
-// on Ready
+// on Ready | on Ready
 client.once('ready', () => {
     GLOBAL_DEBUG.console("log", "BOT.js_Discord_Ready", "Ready!")
-    GLOBAL_CASEID.getlist(global, SQL) // fetch caseid list
-    GLOBAL_SQL.getwhitelist(global, SQL) // fetch whitelist
+    GLOBAL_CASEID.getlist(global, SQL) // fetch caseId list from database | bekomme die Liste von der Datenbank
+    GLOBAL_SQL.getwhitelist(global, SQL) // fetch Whitelist list from SQL | bekomme Liste von SQL
 
-    // Dm an Luba
+    // Dm an Luba | Dm to Luba
     client.users.fetch("289046908809510912").then(member => {
         member.send("> Moderations Funktionen neugestartet.")
     })
     
     
 
-    // Globaler IntervalManager läuft alle 30 Sec neu durch
+    // Globaler IntervalManager läuft alle 30 Sek neu durch | Global IntervalManager runs every 30 seconds
     setInterval(function(){
         INTERVALMANAGER.go(client, SQL, global)
     }, 30000)
 
-    //Blockierte Wörter cachen
+    //Blockierte Wörter cachen | Cache blocked words
     addSwearewords()
 
-    // Find all Link Proved Roles
+    //Alle LinkProoved Rollen finden | Find all LinkProoved Roles
     client.guilds.cache.forEach((guild) => {
         global.servers[guild.id] = JSON.parse("{\"logchannel\": \"\", \"welcomerole\": \"\", \"serverlog\": \"\" }")
         let role = guild.roles.cache.find(r => r.name === "Link Proved")
@@ -105,7 +105,7 @@ client.once('ready', () => {
         }
     })
 
-    // Cache alle LogChannel und WIllkommensrollen
+    // Cache alle LogChannel und Willkommensrollen | Cache all LogChannels and WelcomeRoles
     SQL.execute("SELECT * FROM serverconfig", function (err, results, fields) {
         if (!err) {
             for (let i = 0; i < results.length; i++) {
@@ -122,7 +122,7 @@ client.once('ready', () => {
     
  
 
-    // Cache alle Teamrollen
+    // Cache alle Teamrollen | Cache all TeamRoles
     SQL.execute("SELECT * FROM `userroles` ORDER BY userid", function (err, results, fields) {
         if (!err) {
             let userid;
@@ -137,7 +137,7 @@ client.once('ready', () => {
         }
     })
 
-    // Cache alle Leute ohne niceone Rolle
+    // Cache alle Leute ohne niceone Rolle | Cache all people without niceone role
     SQL.execute("SELECT * FROM noniceones", function (err, results, fields) {
         if (!err) {
             for (let i = 0; i < results.length; i++) {
@@ -146,7 +146,7 @@ client.once('ready', () => {
         }
     })
 
-    // Cache alle gemuteten Leute
+    // Cache alle gemuteten Leute | Cache all muted people
     SQL.execute("SELECT * FROM mutes", function (err, results, fields) {
         if (!err) {
             for (let i = 0; i < results.length; i++) {
@@ -183,15 +183,15 @@ function addSwearewords() {
 
 
 
-// Interactions Handling
+// Interaction handling | Interaction handling
 client.ws.on('INTERACTION_CREATE', async (interaction) => {
 
-    // Slash Command Handler
+    // Slash Command Handler 
     if(interaction.type == 2){
         SELECTOR_COMMANDS.go(global, client, SQL, interaction)
     }
 
-    // Buttons Handler
+    // Button Handler
     else if (interaction.type == 3){
         SELECTOR_BUTTONS.go(global, client, SQL, interaction)
     }
@@ -207,11 +207,11 @@ client.on('guildBanAdd', async (guildBan, user) => {
     let time = Number(auditlog.id).toString(2) + ""
     if (auditlog.executor.id == client.user.id) return
     if (Date.now() - (parseInt(time.slice(0, -22), 2) + 1420070400000) > 2000) return;
-    // Einträge in die benötigte Datenbank Tabelle
+    // Einträge in die benötigte Datenbank Tabelle einfügen | Insert entries into the needed database table
     GLOBAL_SQL.execute(SQL, "BOT_BAN_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags,  reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [seq, auditlog.target.id, guildBan.guild.id, 'ban', "Server", (auditlog.reason == null) ? "keinen Grund angegben": auditlog.reason, auditlog.executor.id, "", Date.now(), '0'])
 
-    // Log- TEMPORÄR bis Reply an User den Part übernimmt
+    // Log- TEMPORÄR bis Reply an User den Part übernimmt | Log- TEMPORÄR until the user replies to the part
     GLOBAL_WEBHOOK.go(global.servers[guildBan.guild.id].logchannel, [
             {
                 "title": "Ein User wurde gebannt",
@@ -249,11 +249,11 @@ client.on('guildBanRemove', async (guildBan, user) => {
     let time = Number(auditlog.id).toString(2) + ""
     if (auditlog.executor.id == client.user.id) return
     if (Date.now() - (parseInt(time.slice(0, -22), 2) + 1420070400000) > 2000) return;
-    // Einträge in die benötigte Datenbank Tabelle
+    // Einträge in die benötigte Datenbank Tabelle einfügen | Insert entries into the needed database table
     GLOBAL_SQL.execute(SQL, "BOT_UNBAN_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags,  reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [seq, auditlog.target.id, guildBan.guild.id, 'unban', "Server", "", auditlog.executor.id, "", Date.now(), '0'])
 
-    // Log- TEMPORÄR bis Reply an User den Part übernimmt
+    // Log- TEMPORÄR bis Reply an User den Part übernimmt | Log- TEMPORÄR until the user replies to the part
     GLOBAL_WEBHOOK.go(global.servers[guildBan.guild.id].logchannel, [
             {
                 "title": "Ein User wurde entbannt",
@@ -396,8 +396,8 @@ client.on('guildMemberAdd', async (member) => {
                 botwelle = true;
             }
         }
-
-        //Rollen vergabe für Teamrollen beim Beitritt
+ 
+        //Rollen Vergabe für Teamrollen beim Beitritt (Team-Rollen) | Give roles on join (Team-Roles)
         if (member.guild.id == global.config.botconfig.mainserver) {
             if (global.teamroles[member.id] != null) {
                 for (let i = 0; i < global.teamroles[member.id].length; i++) {
@@ -407,33 +407,33 @@ client.on('guildMemberAdd', async (member) => {
             }
         }
 
-        //Change Nickname When TheJoCraft
+        //Ändere Nickname des Users zu Faker wenn Name == 'TheJoCraft' | Change nickname of user to Faker if name == 'TheJoCraft'
         if (member.user.username.toString().toLowerCase() === "thejocraft") {
             member.setNickname("Faker", "Faken von TheJoCraft")
-            // Warnen des Users
-            // generate CaseID
+            // Warnen des Users | Warn user
+            // generate CaseID | generate CaseID
             var seq = await GLOBAL_CASEID.generate(global)
 
-            // Sende dem User infos per DM
+            // Sende dem User Infos per DM | Send user info per DM
             await client.guilds.cache.get(interaction.guild_id).members.fetch(interaction.data.options[0].value)
                 .then(async user => {
                     await EXECUTER_REPLY.user(client, user, client.member.user, seq, "warn", "Bitte unterlasse das Faken von TheJoCraft", member.guild, null)
                 })
 
-            // Einträge in die benötigte Datenbank Tabelle
+            // Einträge in die benötigte Datenbank Tabelle | Insert into required database table
             GLOBAL_SQL.execute(SQL, "WARNCOMMAND_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags, reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 [seq, member.user.id, interaction.guild_id, 'warn', 'Server', "Bitte unterlasse das Faken von TheJoCraft", client.member.user.id, "", Date.now(), '0'])
 
         }
     
-    // Vergabe von Niceone bei keinen Verstößen
+    // Vergabe von Niceone bei keinen Verstößen | Give Niceone on no offense
         if (global.noniceones[member.id] == null || !global.noniceones[member.id].includes(member.guild.id + ", ")) {
             if (member.guild.roles.cache.find(role => role.id == global.servers[member.guild.id].welcomerole) != null) {
                 member.roles.add(member.guild.roles.cache.find(role => role.id == global.servers[member.guild.id].welcomerole))
             }
         }
     }
-    // Vergabe von muted Rolle beim joinen
+    // Vergabe von muted Rolle beim joinen | Give muted role on join
     if (global.mutes[member.id] != null && (global.mutes[member.id].servers.includes(member.guild.id) || global.mutes[member.id].servers.includes("global"))) {
         member.roles.add(member.guild.roles.cache.find(role => role.name.toLowerCase() === "muted"))
     }
@@ -490,11 +490,11 @@ client.on('guildMemberRemove', async (member) => {
     let time = Number(auditlog.id).toString(2) + ""
     if (auditlog.target.id == member.id) {
         if (Date.now() - (parseInt(time.slice(0, -22), 2) + 1420070400000) > 2000) return;
-        // Einträge in die benötigte Datenbank Tabelle
+        // Einträge in die benötigte Datenbank Tabelle | Insert into required database table
         GLOBAL_SQL.execute(SQL, "BOT_KICK_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags,  reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [seq, auditlog.target.id, member.guild.id, 'kick', "Server", (auditlog.reason == null) ? "keinen Grund angegben": auditlog.reason, auditlog.executor.id, "", Date.now(), '0'])
 
-        // Log- TEMPORÄR bis Reply an User den Part übernimmt
+        // Log- TEMPORÄR bis Reply an User den Part übernimmt | Log TEMPORARY until Reply to User takes part
         GLOBAL_WEBHOOK.go(global.servers[member.guild.id].logchannel, [
                 {
                     "title": "Ein User wurde gekickt",
@@ -521,12 +521,12 @@ client.on('guildMemberRemove', async (member) => {
 })
 
 client.on('guildUnavailable', (guild) => {
-    // Handler
+    // Handler 
 })
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
 
-    //Änderung von Nicknamen
+    //Änderung von Nicknamen | Change of nickname
     if (oldMember.nickname != newMember.nickname) {
 
         if (newMember.nickname != null) {
@@ -559,7 +559,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
         )
     }
 
-    //Eintrag bei Vergabe/entnahme von niceones
+    //Eintrag bei Vergabe/Entnahme von Niceones | Entry of assignment/take away of Niceones
     if (newMember.roles.cache != oldMember.roles.cache) {
         let fetchedAuditLog = await newMember.guild.fetchAuditLogs({
             limit: 1,
@@ -598,7 +598,7 @@ client.on("voiceStateUpdate", async (oldVoiceState, newVoiceState) => {
 });
 
 client.on('threadCreate', async (thread) => {
-    await thread.join() //Notwendig für moderative Zwecke
+    await thread.join() //Notwendig für moderative Zwecke | Needed for moderative purposes
 })
 
 client.on('messageCreate', (message) => {
@@ -628,19 +628,19 @@ client.on('messageCreate', (message) => {
                     var endTimestamp = (Date.now() + 1000 * end)
 
 
-                    // Einträge in die benötigten Datenbank Tabellen
+                    // Einträge in die benötigten Datenbank Tabellen einfügen | Insert entries into the required database tables
                     GLOBAL_SQL.execute(SQL, "BOT_MUTES_INSERT", "INSERT INTO mutes (intern, id, serverid, bereich, duration, timestamp) VALUES (?, ?, ?, ?, ?, ?)", [seq, message.author.id, message.guild.id, "Server", end, Date.now()])
                     GLOBAL_SQL.execute(SQL, "BOT_MUTE_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags,  reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         [seq, message.author.id, message.guild.id, 'mute', "Server", "AutoMod - Spam", client.user.id, message.channel.id, Date.now(), endTimestamp])
 
-                    //Chache den Mute
+                    //Chache den Mute in der globalen Variable | Cache the mute in the global variable
                     if (global.mutes[message.author.id] != undefined) {
                         global.mutes[message.author.id]["servers"].push(JSON.parse(message.guild.id.toString()))
                     } else {
                         global.mutes[message.author.id] = JSON.parse("{\"servers\": [\"" + message.guild.id.toString() + "\"]}")
                     }
 
-                    //Sende dem User infos per DM
+                    //Sende dem User infos per DM | Send the user infos per DM
                     client.guilds.cache.get(message.guild.id).members.fetch(message.author.id).then(user => {
                         EXECUTER_REPLY.user(client, user, client.user, seq, "mute", "AutoMod - Spam", message.guild, endTimestamp)
                     })
@@ -722,7 +722,7 @@ client.on('debug', (message) => {
 })
 
 process.on('unhandledRejection', error => {
-    // Will print "unhandledRejection err is not defined"
+    // Will print "unhandledRejection err is not defined" to the console when the promise is rejected. | Schreibe "unhandledRejection err is not defined" auf die Konsole wenn die Promise verfehlt ist.
     GLOBAL_DEBUG.console("error", "unhandledRejection", error);
 });
 
@@ -735,5 +735,5 @@ process.on('uncaughtException', function (err) {
 
 
 
-// Discord Log In
+// Discord Log In | Login to Discord
 client.login(global.config.botconfig.token);

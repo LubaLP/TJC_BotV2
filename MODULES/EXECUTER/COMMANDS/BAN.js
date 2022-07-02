@@ -29,16 +29,16 @@ EXECUTER_COMMAND_BAN.command = async function(global, client, SQL, interaction) 
         }
     }
 
-    // generate CaseID
+    // generate CaseID | generiere CaseID
     var seq = await GLOBAL_CASEID.generate(global)
 
-    // Sende dem User infos per DM
+    // Sende dem User infos per DM | send User infos per DM
     await client.guilds.cache.get(interaction.guild_id).members.fetch(interaction.data.options[0].value)
     .then(async user => {
         await EXECUTER_REPLY.user(client, user, interaction.member.user, seq, "ban", grund, location, null)
     }).catch()
 
-    // Ban on only Server
+    // Ban on only Server | Bann nur auf Server
     if (bereich == "server") {
         client.guilds.cache.get(interaction.guild_id).members.fetch(interaction.data.options[0].value)
         .then(member => {
@@ -51,7 +51,7 @@ EXECUTER_COMMAND_BAN.command = async function(global, client, SQL, interaction) 
         }).catch()
     }
 
-    // Globaler Ban
+    // Globaler Ban | Global Ban
     else if (location === "global") {
         client.guilds.cache.forEach(guild => {
             guild.members.fetch(interaction.data.options[0].value)
@@ -69,12 +69,12 @@ EXECUTER_COMMAND_BAN.command = async function(global, client, SQL, interaction) 
 
     }
 
-    // Einträge in die benötigte Datenbank Tabelle
+    // Einträge in die benötigte Datenbank Tabelle eintragen | Put entries in the required database table
     GLOBAL_SQL.execute(SQL, "BANCOMMAND_CASE_INSERT", "INSERT INTO cases (caseid, user, serverid, type, tags,  reason, moderator, channel, timestamp, endTimestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [seq, interaction.data.options[0].value, interaction.guild_id, 'ban', bereich, grund, interaction.member.user.id, interaction.channel_id, Date.now(), '0'])
 
 
-    // Antwort an den Moderator
+    // Antwort an den Moderator | Reply to the Moderator
     EXECUTER_REPLY.go(
         client,
         interaction,
@@ -89,7 +89,7 @@ EXECUTER_COMMAND_BAN.command = async function(global, client, SQL, interaction) 
         true
     )
 
-    // Log- TEMPORÄR bis Reply an User den Part übernimmt
+    // Log- TEMPORÄR bis Reply an User den Part übernimmt | Log- TEMPORÄR until the Part is taken by the User
     GLOBAL_WEBHOOK.go(global.servers[interaction.guild_id].logchannel, [
             {
                 "title": "Ein User wurde gebannt",

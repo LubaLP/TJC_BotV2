@@ -5,7 +5,7 @@ const GLOBAL_BUTTONS = require("../../GLOBAL/BUTTONS.js")
 
 EXECUTER_COMMANDS_MODLOG.command = async function(global, client, SQL, interaction) {
     let cases = []
-    // Abfrage aller cases, die entweder global sind oder den aktuellen Server betreffen
+    // Abfrage aller cases, die entweder global sind oder den aktuellen Server betreffen | Query all cases, which are either global or belong to the current server
     SQL.execute("SELECT * FROM `cases` WHERE user = ? AND (tags = 'global' OR (tags = 'Server' AND serverid = ?)) ORDER BY intern desc ",
         [interaction.data.options[0].value, interaction.guild_id],
         async function (err, results, fields) {
@@ -26,7 +26,7 @@ EXECUTER_COMMANDS_MODLOG.command = async function(global, client, SQL, interacti
                     }
                 }
 
-                // Embedfilds für einzelne Cases
+                // Embedfilds für einzelne Cases | Embedfields for single cases
                 let fields = []
                 let i = 0;
                 await cases.forEach(Case => {
@@ -38,7 +38,7 @@ EXECUTER_COMMANDS_MODLOG.command = async function(global, client, SQL, interacti
                         "name": Case.id,
                         "value": "Type: `" + Case.type + "`\nGrund: `" + Grund + "`\nModerator: <@!" + Case.moderator + ">\nBereich: `" + Case.tags + "`\n" +
                             "Zeitpunkt: <t:" + timeDc + ">" + endTime,
-                        "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen
+                        "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen | Allows the fields to be stacked next to each other
                     })
                     i++;
                 })
@@ -67,7 +67,7 @@ EXECUTER_COMMANDS_MODLOG.command = async function(global, client, SQL, interacti
                     global.openModLogs[buttons[0].components[0].custom_id.toString().slice(0, -1)] = JSON.parse("{\"user\": { \"id\":\"" + interaction.data.options[0].value + "\", \"tag\": " + interaction.data.options[0].value + ", \"avatar\": \"https://lubalp.eu/discord/avatars/4.png\"}}")
                 }
 
-                // User ausgabe von Modlogs
+                // User ausgabe von Modlogs | User output from Modlogs
                 EXECUTER_REPLY.go(
                     client,
                     interaction,
@@ -100,7 +100,7 @@ EXECUTER_COMMANDS_MODLOG.command = async function(global, client, SQL, interacti
                     userAvatar = "https://cdn.discordapp.com/avatars/" + user.user.id + "/" + user.user.avatar
                 }
 
-                // Wenn keine Einträge gefunden worden
+                // Wenn keine Einträge gefunden worden sind | If no entries were found
                 EXECUTER_REPLY.go(
                     client,
                     interaction,
@@ -145,7 +145,7 @@ EXECUTER_COMMANDS_MODLOG.button = async function(global, client, SQL, interactio
                                 "name": Case.caseid,
                                 "value": "Type: `" + Case.type + "`\nGrund: `" + Grund + "`\nModerator: <@!" + Case.moderator + ">\nBereich: `" + Case.tags + "`\n" +
                                     "Zeitpunkt: <t:" + timeDc + "> " + endTime,
-                                "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen
+                                "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen | Allows the fields to be stacked next to each other
                             })
                         }
                     }
@@ -186,7 +186,7 @@ EXECUTER_COMMANDS_MODLOG.button = async function(global, client, SQL, interactio
                                 "name": Case.caseid,
                                 "value": "Type: `" + Case.type + "`\nGrund: `" + Grund + "`\nModerator: <@!" + Case.moderator + ">\nBereich: `" + Case.tags + "`\n" +
                                     "Zeitpunkt:<t:" + timeDc + "> " + endTime,
-                                "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen
+                                "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen | Allows the fields to be stacked next to each other
                             })
                         }
                     }
@@ -228,7 +228,7 @@ EXECUTER_COMMANDS_MODLOG.button = async function(global, client, SQL, interactio
                                 "name": Case.caseid,
                                 "value": "Type: `" + Case.type + "`\nGrund: `" + Grund + "`\nModerator: <@!" + Case.moderator + ">\nBereich: `" + Case.tags + "`\n" +
                                     "Zeitpunkt: <t:" + timeDc + "> " + endTime,
-                                "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen
+                                "inline": false //Gibt an das sich die Felder nebeneinander anreihen dürfen | Allows the fields to be stacked next to each other
                             })
                         }
                     }

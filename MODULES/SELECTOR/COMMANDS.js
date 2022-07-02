@@ -17,13 +17,13 @@ const EXECUTER_REPLY = require("../EXECUTER/REPLY.js") // Reply System (pong)
 
 SELECTOR_COMMANDS.go = async function(global, client, SQL, interaction) {
 
-    // Extract Data
+    // Extract Data | Daten extrahieren
     var command = interaction.data.name
     var guild = await client.guilds.fetch(interaction.guild_id).catch((e) => {GLOBAL_DEBUG.console("warn", "SELECTOR_COMMANDS_FETCH-GUILD", e)});
     var member = await guild.members.fetch(interaction.member.user.id).catch((e) => {GLOBAL_DEBUG.console("warn", "SELECTOR_COMMANDS_FETCH-MEMBER", e)});
     var channel = await client.channels.fetch(interaction.channel_id).catch((e) => {GLOBAL_DEBUG.console("warn", "SELECTOR_COMMANDS_FETCH-CHANNEL", e)});  
 
-    // Command Selector
+    // Command Selector | Befehlsauswahl
     switch(command){
 
         case "mute":

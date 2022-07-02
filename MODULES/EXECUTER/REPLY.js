@@ -16,16 +16,16 @@ const {
  * 
  */
 
-// Reply to a Slash Command
+//Reply to a Slash Command | Antwort auf einen Slash Command
 EXECUTER_REPLY.pong = async function(client, interaction, isprivate) {
 
-    // Check, if parameter is specific type | is none => throw error
+    // Check, if parameter is specific type | is none => throw error | Gucken, ob Parameter ein bestimmter Typ ist | Wenn nicht => Fehler
     if(typeof(isprivate) != "boolean"){GLOBAL_THROW.go("EXECUTER_REPLY.pong_check_typeof_private", "isprivate (parameter [2]) must be a boolean")}
 
-    // set to ephemeral if true
+    // set to ephemeral if true | wenn true => Ephemeral
     var flag = (isprivate === true) ? 64 : 1;
 
-    // send pong
+    // send pong | sende Pong
     client.api.interactions(interaction.id, interaction.token).callback.post({
         data: {
             type: 5,
@@ -41,10 +41,10 @@ EXECUTER_REPLY.pong = async function(client, interaction, isprivate) {
 }
 
 
-// ACK for Button Interaction
+// ACK for Button Interaction | ACK für Button Interaktion
 EXECUTER_REPLY.button = async function(client, interaction) {
 
-    // send pong
+    // send pong | sende Pong
     client.api.interactions(interaction.id, interaction.token).callback.post({
         data: {
             type: 6
@@ -58,10 +58,10 @@ EXECUTER_REPLY.button = async function(client, interaction) {
 
 
 
-// Reply to a Slash Command
+// Reply to a Slash Command | Antwort auf einen Slash Command
 EXECUTER_REPLY.go = async function(client, interaction, plainMSG, embeds, components, publicMSG) {
 
-    // send reply
+    // send reply | sende Antwort
         client.api.webhooks(interaction.application_id, interaction.token).messages("@original").patch({
         data: {
             "content": plainMSG,
@@ -80,9 +80,9 @@ EXECUTER_REPLY.go = async function(client, interaction, plainMSG, embeds, compon
 }
 
 
-// Button Error
+// Button Error | Button Fehler
 EXECUTER_REPLY.error = async function(client, interaction) {
-        // send reply
+        // send reply | sende Antwort
         client.api.interactions(interaction.id, interaction.token).callback.post({
             data: {
                 type: 4,
@@ -105,7 +105,7 @@ EXECUTER_REPLY.error = async function(client, interaction) {
     }
 
 
-// Reply to a Slash Command
+// Reply to a Slash Command | Antwort auf einen Slash Command
 EXECUTER_REPLY.user = async function(client, user, owner, caseid, type, reason, location, timeend) {
 
     if(typeof user == "undefined" || !(user.id > 1)){GLOBAL_THROW.go("EXECUTER_REPLY.user_check_exist_user", "user (parameter [1]) not found")}
@@ -117,7 +117,7 @@ EXECUTER_REPLY.user = async function(client, user, owner, caseid, type, reason, 
     if(type == "mute" && (typeof timeend == "undefined" || !(timeend > 1000))){GLOBAL_THROW.go("EXECUTER_REPLY.user_check_timeend", "timeend (parameter [7]) not found for mute")}
 
 
-    // send dm to user
+    // send dm to user | sende dm an user
     user.createDM()
     .then((dmchannel) => {
 

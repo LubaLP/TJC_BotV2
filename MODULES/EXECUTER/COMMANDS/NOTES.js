@@ -6,11 +6,11 @@ const GLOBAL_CASEID = require("../../GLOBAL/CASEID.js")
 const GLOBAL_WEBHOOK = require("../../GLOBAL/WEBHOOKS.js")
 
 NOTESCOMMAND.command = async function(global, client, SQL, interaction) {
-    //Eintrag in die Datenbank
+    //Eintrag in die Datenbank hinzufügen | Add entry to database
     GLOBAL_SQL.execute(SQL, "NOTESCOMMAND_INSERT", "INSERT INTO usernotes (user, note, moderator) VALUES (?, ?, ?)",
         [interaction.data.options[0].value, interaction.data.options[1].value, interaction.member.user.id])
 
-    // Antwort an den Moderator
+    // Antwort an den Moderator | Reply to the Moderator
     EXECUTER_REPLY.go(
         client,
         interaction,

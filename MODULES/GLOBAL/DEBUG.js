@@ -1,9 +1,9 @@
 var GLOBAL_DEBUG = {};
 
-// Rufe die THOW-Function auf
+// Rufe die THOW-Function auf | Call the THROW-Function
 const GLOBAL_THROW = require("./THROW.js")
 
-// Console kann eingefärbt werden
+// Console kann eingefärbt werden | Console can be colored
 const NPM_COLORS = require("colors/safe")
 
 GLOBAL_DEBUG.console = function(type, identifier, message) {

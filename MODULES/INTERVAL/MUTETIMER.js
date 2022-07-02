@@ -9,22 +9,22 @@ MUTETIMER.go = function (SQL, client, global) {
                 if (!err) {
                     results.forEach(async (result) => {
                         await GLOBAL_SQL.execute(SQL, "INTERVAL_MUTETIMER.DELETE", "DELETE FROM mutes WHERE id = ?", [result.id])
-                        if (result['bereich'] === "Server") { // Mutes die nur auf dem Hauptserver sind
+                        if (result['bereich'] === "Server") { // Mutes die nur auf dem Hauptserver sind | Mutes that only apply to the main server
                             client.guilds.cache.get(result['serverid']).members.fetch(result['id']).then(member => {
                                 member.roles.remove(member.guild.roles.cache.find(role => role.name.toString().toLowerCase() === "muted"))
                             })
-                        } else if (result['bereich'] === "Projekte") { // Mutes die nur den Projektechannel betreffen
+                        } else if (result['bereich'] === "Projekte") { // Mutes die nur den Projektechannel betreffen | Mutes that only apply to the project channel
                             client.guilds.cache.get(global.config.botconfig.mainserver).members.fetch(result['id']).then(member => {
                                 member.roles.add(global.config.serverdata.projekterole)
                             })
-                        } else if (result['bereich'] === "Global") { // Mutes die auf allen TJC-Servern sind
-                            //Hauptserver
+                        } else if (result['bereich'] === "Global") { // Mutes die auf allen TJC-Servern sind | Mutes that apply to all TJC servers
+                            //Hauptserver | Main server
                             client.guilds.cache.get(global.config.botconfig.mainserver).members.fetch(result['id']).then(member => {
                                 if (member.roles.find(role => role.name === "muted")) {
                                     member.roles.remove(member.guild.roles.cache.find(role => role.name === "muted"))
                                 }
                             })
-                            //alle anderen TJC Server
+                            //alle anderen TJC Server | All other TJC servers
                             client.guilds.cache.forEach(guild => {
                                 let role = guild.roles.cache.find(role => role.name === "muted")
                                 guild.members.fetch(result['id']).then(member => {
